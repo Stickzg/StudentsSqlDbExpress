@@ -1,0 +1,27 @@
+<ul>
+  <li>
+  <p>
+      {{student.name}}
+    </p>
+    <p>
+      {{student.age}}
+    </p>
+      {{#if student.sex}}
+        <p>nő</p>
+      {{else}}
+        <p>férfi</p>
+      {{/if}}
+      
+    </p>
+    <p>
+      {{student.score}}
+    </p>
+    </li>
+    <a href="/students/{{student.name}}/update">Adatok frissítése</a>
+
+    <form method="POST" action="/students/{{student.id}}?_method=DELETE">
+     <button type="submit" class="btn btn-danger">Törlés</button>
+    </form>
+
+    <a href="./">Index</a>
+</ul>
