@@ -6,17 +6,20 @@ class Model {
     this.connection = null;
   }
 
-  connect () {
+  connect (callback) {
     this.connection = mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE
     });
-    this.connection.connect();
+    this.connection.connect((err, message) => {
+      if (err) return callback(err);
+      return callback(null, 'Connection succesfull.');
+    });
   }
 
-  init () {
+  init (callback) {
     const studentsTable = `create table if not exists students
     (id int AUTO_INCREMENT,
     name varchar(100),
@@ -26,8 +29,8 @@ class Model {
     PRIMARY KEY(id) );`;
 
     this.connection.query(studentsTable, function (err, rows, fields) {
-      if (err) throw err;
-      console.log('Students table created.');
+      if (err) return callback(err);
+      return callback(null, 'Students table created.');
     });
   }
 
