@@ -1,92 +1,50 @@
-const Model = require('../models/student');
-const Student = new Model();
-
-Student.connect((err, message) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(message);
-
-    Student.init((err, message) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(message);
-      }
-    });
-  }
-});
+const Student = require('../models/student');
 
 module.exports = {
-  index: function (request, response) {
-    Student.findAll(function (error, students) {
-      if (error) {
-        response.render('errors/500', {error: error}
-        );
-      } else {
-        response.render('students/index', {students: students});
-      }
-    });
+  index: (request, response) => {
+    Student.findAll()
+    .then((students) => response.render('students/index', {students: students}))
+    .catch((err) => response.render('errors/500', {error: err}));
   },
-
-  show: function (request, response) {
-    Student.findOne({id: request.params.id}, function (err, student) {
-      if (err) {
-        response.render('errors/500', {error: err});
-      } else {
-        response.render('students/show', {student: student});
-      }
-    });
+  show: (request, response) => {
+    Student.findById(request.params.id)
+      .then((student) => response.render('students/show', {student: student}))
+      .catch((err) => response.render('errors/500', {error: err}));
   },
 
   new: function (request, response) {
     response.render('students/create');
   },
 
-  create: function (request, response) {
-    Student.create(request.body, function (err, student) {
-      if (err) {
-        response.render('errors/500', {error: err});
-      } else {
-        response.redirect('/students/');
-      }
-    });
+  create: (request, response) => {
+    Student.create(request.body)
+    .then((student) => response.redirect('/students/'))
+    .catch((err) => response.render('errors/500', {error: err}));
   },
 
-  edit: function (request, response) {
-    Student.findOne({id: request.params.id}, function (err, student) {
-      if (err) {
-        response.render('errors/500', {error: err});
-      } else {
-        response.render('students/update', {student: student});
-      }
-    });
+  edit: (request, response) => {
+    Student.findOne({id: request.params.id})
+    .then((student) => response.render('students/update', {student: student}))
+    .catch((err) => response.render('errors/500', {error: err}));
   },
-  update: function (request, response) {
-    Student.update(request.params.id, request.body, function (err, student) {
-      if (err) {
-        response.render('errors/500', {error: err});
-      } else {
-        response.redirect('/students/');
-      }
-    });
+
+  update: (request, response) => {
+    Student.findById(request.params.id)
+      .then((student) => student.update(request.body))
+      .then((student) => response.redirect('/students/'))
+      .catch((err) => response.render('errors/500', {error: err}));
   },
-  delete: function (request, response) {
-    Student.delete(request.params.id, function (err, student) {
-      if (err) {
-        response.render('errors/500', {error: err});
-      } else {
-        response.redirect('/students/');
-      }
-    });
+
+  delete: (request, response) => {
+    Student.findById(request.params.id)
+      .then((student) => student.destroy())
+      .then(() => response.redirect('/students/'))
+      .catch((err) => response.render('errors/500', {error: err}));
   },
-  count: function (request, response) {
-    Student.count(function (err, students) {
-      if (err) {
-        response.render('errors/500', {error: err});
-      } else {
-        response.json({count: students});
-      }
-    });
+
+  count: (request, response) => {
+    Student.count()
+      .then((student) => response.json({count: student}))
+      .catch((err) => response.render('errors/500', {error: err}));
   }
 };

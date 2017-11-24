@@ -2,25 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-const app = express();
 const hbs = require('hbs');
 const methodOverride = require('method-override');
 const path = require('path');
+const sequelize = require('./services/sequelize');
 
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(process.env.DB_DATABASE,
-   process.env.DB_USER, process.env.DB_PASSWORD, {
-     host: 'localhost',
-     dialect: 'mysql'
-   });
-
-const Student = sequelize.define('student', {
-  name: Sequelize.STRING,
-  sex: Sequelize.BOOLEAN,
-  score: Sequelize.INTEGER,
-  age: Sequelize.INTEGER
-});
-
+const app = express();
 const router = require('./routes');
 
 app.set('views', './views/');
@@ -52,7 +39,6 @@ hbs.registerHelper('currentPage', (pages, page, options) => {
   response.json({student: interval});
 }); */
 
-sequelize.sync()
-.then(() => app.listen(3000));
-
-module.exports = Student;
+sequelize.init()
+.then(() => app.listen(3000))
+.catch();
